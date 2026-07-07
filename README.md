@@ -1,24 +1,13 @@
 # intensivo-qux
 Primera unidad del programa de formación "QUX - Intensivo Data + IA", en donde el objetivo es " pasar de no saber qué es una base de datos a poder leer, escribir y validar consultas SQL con ayuda de la IA. Entender de dónde vienen los datos que usamos todos los días."
 
-# 🎬 Netflix Data Analysis using SQL
+-- ====================================================================
+-- PROYECTO: ANÁLISIS DE DATOS DEL CATÁLOGO DE NETFLIX
+-- QUX - Intensivo Data + IA
+-- ====================================================================
 
-## 📌 Objetivo del Proyecto
-Este proyecto constituye la evidencia práctica de la unidad de **Introducción a SQL**. Utilizando un dataset del catálogo de Netflix importado en una base de datos local de PostgreSQL, se formularon y resolvieron preguntas de negocio clave. El objetivo es demostrar el dominio en filtrado de datos, manejo de valores nulos, agrupaciones analíticas y expresiones condicionales basados en el contenido real de la plataforma.
-
-## 🛠️ Tecnologías y Conceptos Aplicados
-* **Motor de Base de Datos:** PostgreSQL
-* **Cliente Visual:** DBeaver
-* **Estructuras SQL Utilizadas:** `SELECT`, `WHERE` (múltiples restricciones), `ORDER BY`, `GROUP BY`, `HAVING`, funciones de agregación (`COUNT`), evaluación de campos `NULL` (`IS NULL`) y estructuras condicionales `CASE WHEN`.
-
----
-
-## 📊 Preguntas de Negocio y Queries de Resolución
-
-### 1. Filtros y Ordenamiento: Contenido Adulto en EE.UU.
-* **Pregunta:** ¿Cuáles son las 10 películas más recientes de Estados Unidos clasificadas para público adulto ('R')?
-* **Query:**
-```sql
+-- 1. [Constraints, Filtering & Sorting]
+-- PREGUNTA: ¿Cuáles son las 10 películas más recientes de Estados Unidos (US) clasificadas para público adulto ('R')?
 SELECT title, release_year, rating, country
 FROM netflix_titles
 WHERE type = 'Movie' 
@@ -26,3 +15,46 @@ WHERE type = 'Movie'
   AND rating = 'R'
 ORDER BY release_year DESC
 LIMIT 10;
+
+
+-- 2. [Handling NULLs + Constraints & Filtering]
+-- PREGUNTA: Identificar películas recientes (post-2018) que no tienen un país asignado (Campos NULL) para auditoría de catálogo.
+SELECT show_id, title, release_year, rating
+FROM netflix_titles
+WHERE type = 'Movie'
+  AND country IS NULL
+  AND release_year > 2018
+ORDER BY release_year DESC
+LIMIT 10;
+
+-- 3. [Lección 9: Queries with Expressions]
+-- PREGUNTA: Queremos categorizar el contenido según su antigüedad. Clasificar los títulos en "Clásicos" (antes de 2000), "Modernos" (2000-2015) y "Nuevos" (Posteriores a 2015) y ver cuántos hay de cada uno.
+SELECT 
+    CASE 
+        WHEN release_year < 2000 THEN 'Clásico (Antes de 2000)'
+        WHEN release_year BETWEEN 2000 AND 2015 THEN 'Moderno (2000-2015)'
+        ELSE 'Nuevo (Post-2015)'
+    END as categoria_antiguedad,
+    COUNT(*) as total_titulos
+FROM netflix_titles
+GROUP BY categoria_antiguedad
+ORDER BY total_titulos DESC;
+
+
+-- 4. [Aggregates, Group By & Order of Execution]
+-- PREGUNTA: ¿Cuáles son los 5 países que han producido más Series de TV ('TV Show') en la plataforma, ignorando los registros sin país y mostrando solo aquellos que tengan más de 20 series?
+SELECT country, COUNT(*) as total_series
+FROM netflix_titles
+WHERE type = 'TV Show' AND country IS NOT NULL
+GROUP BY country
+HAVING COUNT(*) > 20
+ORDER BY total_series DESC
+LIMIT 5;
+
+
+-- 5. [Text Filtering & Aggregates]
+-- PREGUNTA: ¿Cuántas películas o series de la plataforma pertenecen estrictamente al género de Terror/Horror ('Horror Movies' o 'TV Horror')?
+SELECT type, COUNT(*) as total_horror
+FROM netflix_titles
+WHERE listed_in LIKE '%Horror%'
+GROUP BY type;
