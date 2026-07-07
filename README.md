@@ -6,8 +6,44 @@ Primera unidad del programa de formación "QUX - Intensivo Data + IA", en donde 
 -- QUX - Intensivo Data + IA
 -- ====================================================================
 
--- 1. [Constraints, Filtering & Sorting]
--- PREGUNTA: ¿Cuáles son las 10 películas más recientes de Estados Unidos (US) clasificadas para público adulto ('R')?
+# 🎬 Netflix Data Analysis using SQL
+
+## 📌 Objetivo del Proyecto
+Este proyecto constituye la evidencia práctica del bloque de **Introducción a SQL** para el **Intensivo Data + IA de QUX**. Utilizando el catálogo de Netflix importado en una base de datos local en PostgreSQL, se diseñaron y resolvieron 5 preguntas de negocio clave. El propósito es demostrar el dominio técnico en filtrado de datos, gestión de valores nulos (`NULLs`), segmentación por expresiones lógicas y agregaciones avanzadas.
+
+
+```markdown
+# 🎬 Netflix Catalog Data Analysis (SQL)
+
+Este repositorio contiene un conjunto de consultas SQL diseñadas para analizar, auditar y categorizar el catálogo de títulos de Netflix. El proyecto forma parte del **Intensivo Data + IA de QUX**, enfocado en aplicar buenas prácticas de filtrado, agregación, manejo de valores nulos y lógica condicional.
+
+---
+
+## 📋 Descripción del Proyecto
+El objetivo principal es responder a preguntas de negocio clave y realizar tareas de auditoría de datos sobre una tabla llamada `netflix_titles`. A través de este script, se resuelven problemas que van desde la clasificación de contenido por antigüedad hasta la identificación de registros incompletos para la limpieza de datos.
+
+---
+
+## 🛠️ Tecnologías Utilizadas
+* **Lenguaje:** SQL (ANSI SQL estándar)
+* **Conceptos clave aplicados:**
+  * Filtrado y ordenamiento de datos (`WHERE`, `ORDER BY`, `LIMIT`).
+  * Manejo de valores ausentes (`IS NULL`, `IS NOT NULL`).
+  * Expresiones condicionales (`CASE WHEN`).
+  * Agregaciones y agrupamientos con filtros avanzados (`GROUP BY`, `HAVING`).
+  * Filtrado de texto mediante patrones (`LIKE`).
+
+---
+
+## 🔍 Consultas Implementadas y Lógica SQL
+
+A continuación se detallan los casos de uso resueltos junto con el código SQL correspondiente:
+
+### 1. Top 10 Películas Recientes para Adultos (US)
+* **Objetivo:** Identificar las 10 películas más recientes producidas en Estados Unidos con clasificación **'R'** (público adulto).
+* **Técnicas:** `Constraints, Filtering & Sorting`.
+
+```sql
 SELECT title, release_year, rating, country
 FROM netflix_titles
 WHERE type = 'Movie' 
@@ -16,9 +52,16 @@ WHERE type = 'Movie'
 ORDER BY release_year DESC
 LIMIT 10;
 
+```
 
--- 2. [Handling NULLs + Constraints & Filtering]
--- PREGUNTA: Identificar películas recientes (post-2018) que no tienen un país asignado (Campos NULL) para auditoría de catálogo.
+---
+
+### 2. Auditoría de Catálogo: Películas sin País Asignado
+
+* **Objetivo:** Detectar películas estrenadas después de 2018 que no tienen asignado un país de origen (valores `NULL`), permitiendo al equipo de datos priorizar su corrección.
+* **Técnicas:** `Handling NULLs + Constraints & Filtering`.
+
+```sql
 SELECT show_id, title, release_year, rating
 FROM netflix_titles
 WHERE type = 'Movie'
@@ -27,8 +70,16 @@ WHERE type = 'Movie'
 ORDER BY release_year DESC
 LIMIT 10;
 
--- 3. [Lección 9: Queries with Expressions]
--- PREGUNTA: Queremos categorizar el contenido según su antigüedad. Clasificar los títulos en "Clásicos" (antes de 2000), "Modernos" (2000-2015) y "Nuevos" (Posteriores a 2015) y ver cuántos hay de cada uno.
+```
+
+---
+
+### 3. Categorización por Antigüedad del Contenido
+
+* **Objetivo:** Clasificar y contar cuántos títulos entran en las categorías de *"Clásicos"* (antes de 2000), *"Modernos"* (2000-2015) y *"Nuevos"* (post-2015).
+* **Técnicas:** `Queries with Expressions (CASE WHEN)` y `GROUP BY`.
+
+```sql
 SELECT 
     CASE 
         WHEN release_year < 2000 THEN 'Clásico (Antes de 2000)'
@@ -40,9 +91,16 @@ FROM netflix_titles
 GROUP BY categoria_antiguedad
 ORDER BY total_titulos DESC;
 
+```
 
--- 4. [Aggregates, Group By & Order of Execution]
--- PREGUNTA: ¿Cuáles son los 5 países que han producido más Series de TV ('TV Show') en la plataforma, ignorando los registros sin país y mostrando solo aquellos que tengan más de 20 series?
+---
+
+### 4. Top 5 Países Productores de Series de TV
+
+* **Objetivo:** Encontrar los 5 países con mayor producción de `TV Shows`, excluyendo registros sin país y filtrando solo aquellos con un volumen superior a 20 series.
+* **Técnicas:** `Aggregates, Group By & Order of Execution (HAVING)`.
+
+```sql
 SELECT country, COUNT(*) as total_series
 FROM netflix_titles
 WHERE type = 'TV Show' AND country IS NOT NULL
@@ -51,10 +109,28 @@ HAVING COUNT(*) > 20
 ORDER BY total_series DESC
 LIMIT 5;
 
+```
 
--- 5. [Text Filtering & Aggregates]
--- PREGUNTA: ¿Cuántas películas o series de la plataforma pertenecen estrictamente al género de Terror/Horror ('Horror Movies' o 'TV Horror')?
+---
+
+### 5. Análisis de Contenido de Terror (Horror)
+
+* **Objetivo:** Contabilizar cuántas películas y series pertenecen estrictamente al género de Terror/Horror a través de las etiquetas del catálogo.
+* **Técnicas:** `Text Filtering (LIKE)` y `Aggregates`.
+
+```sql
 SELECT type, COUNT(*) as total_horror
 FROM netflix_titles
 WHERE listed_in LIKE '%Horror%'
 GROUP BY type;
+
+```
+
+---
+
+## 🚀 Cómo Utilizar este Script
+
+1. **Clona el repositorio:**
+```bash
+git clone [https://github.com/TU_USUARIO/TU_REPOSITORIO.git](https://github.com/TU_USUARIO/TU_REPOSITORIO.git)
+
