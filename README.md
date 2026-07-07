@@ -39,16 +39,15 @@ El objetivo principal es responder a preguntas de negocio clave y realizar tarea
 
 A continuación se detallan los casos de uso resueltos junto con el código SQL correspondiente:
 
-### 1. Top 10 Películas Recientes para Adultos (US)
-* **Objetivo:** Identificar las 10 películas más recientes producidas en Estados Unidos con clasificación **'R'** (público adulto).
-* **Técnicas:** `Constraints, Filtering & Sorting`.
-
+### 1. Constraints, Filtering & Sorting (Filtros y Ordenamiento)
+* **Pregunta:** ¿Cuáles son las 10 películas más recientes de Estados Unidos (US) clasificadas para público familiar ('PG')?
+* **Query:**
 ```sql
 SELECT title, release_year, rating, country
 FROM netflix_titles
 WHERE type = 'Movie' 
   AND country = 'United States' 
-  AND rating = 'R'
+  AND rating = 'PG'
 ORDER BY release_year DESC
 LIMIT 10;
 
